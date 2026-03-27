@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD de Dispositivos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <h1>CRUD de Dispositivos</h1>
+
+  <!-- ========== FORMULÁRIO ========== -->
+  <section id="formulario">
+    <h2>Formulário</h2>
+
+    <label>ID (para buscar, atualizar ou excluir):</label>
+    <input type="text" id="campoId" placeholder="Ex: ff80818...">
+
+    <label>Nome do dispositivo:</label>
+    <input type="text" id="campoNome" placeholder="Ex: Galaxy S25">
+
+    <label>Cor:</label>
+    <input type="text" id="campoCor" placeholder="Ex: Preto">
+
+    <label>Capacidade:</label>
+    <input type="text" id="campoCapacidade" placeholder="Ex: 256 GB">
+
+    <label>Preço (R$):</label>
+    <input type="number" id="campoPreco" placeholder="Ex: 1999.90">
+
+    <div id="botoes">
+      <button id="btnListar">Listar Todos</button>
+      <button id="btnBuscar">Buscar por ID</button>
+      <button id="btnCadastrar">Cadastrar</button>
+      <button id="btnAtualizar">Atualizar (PUT)</button>
+      <button id="btnExcluir">Excluir</button>
+    </div>
+  </section>
+
+  <!-- ========== MENSAGEM DE FEEDBACK ========== -->
+  <div id="mensagem"></div>
+
+  <!-- ========== TABELA DE RESULTADOS ========== -->
+  <section id="listagem">
+    <h2>Dispositivos</h2>
+
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Cor</th>
+          <th>Capacidade</th>
+          <th>Preço</th>
+        </tr>
+      </thead>
+
+      <tbody id="corpoTabela">
+        <!-- As linhas serão criadas pelo JavaScript -->
+      </tbody>
+    </table>
+  </section>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
