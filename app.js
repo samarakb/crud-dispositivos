@@ -122,9 +122,9 @@ async function listarDispositivos() {
     renderizar();
 
     // 5. Informar o usuário
-    mostrarMensagem(dispositivos.length + ' dispositivos encontrados');
+    mostrarMensagem(dispositivos.length + " dispositivos encontrados", "sucesso");
   } catch (erro) {
-    mostrarMensagem('Erro ao listar: ' + erro.message, 'erro');
+    mostrarMensagem("Erro ao listar: " + erro.message, "erro");
   }
 }
 
