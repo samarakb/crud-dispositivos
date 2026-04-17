@@ -315,9 +315,40 @@ async function atualizarDispositivo() {
 }
 
 async function excluirDispositivo() {
-  alert('Botão EXCLUIR clicado!');
-}
+  const id = campoId.value.trim();
 
+  if (!id) {
+    mostrarMensagem('Digite um ID para excluir.', 'erro');
+    return;
+  }
+
+  const confirmou = confirm('Tem certeza que deseja excluir?');
+
+  if (!confirmou) {
+    return;
+  }
+
+  try {
+    const respostaHTTP = await fetch(`${URL_API}/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Erro ao excluir. Status: ' + respostaHTTP.status, 'erro');
+      return;
+    }
+
+    dispositivos = dispositivos.filter(d => d.id !== id);
+
+    renderizar();
+
+    limparFormulario();
+
+    mostrarMensagem('Dispositivo excluído com sucesso.', 'sucesso');
+  } catch (erro) {
+    mostrarMensagem('Erro ao excluir: ' + erro.message, 'erro');
+  }
+}
 
 document.getElementById('btnListar')
   .addEventListener('click', listarDispositivos);
