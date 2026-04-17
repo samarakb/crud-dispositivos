@@ -133,11 +133,126 @@ async function listarDispositivos() {
 // ============================================================
 
 async function buscarPorId() {
-  alert('Botão BUSCAR POR ID clicado!');
+  // 1. Pegar o valor que o usuário digitou no campo ID
+  const id = campoId.value.trim();
+
+  // 2. Validar: se o campo está vazio, avisar e parar
+  if (!id) {
+    mostrarMensagem('Digite um ID para buscar.', 'erro');
+    return; // "return" encerra a função aqui
+  }
+
+  try {
+    // 3. Fazer a requisição GET, agora com o ID na URL
+    // (Template Literal: permite inserir variáveis com ${})
+    const respostaHTTP = await fetch(`${URL_API}/${id}`);
+
+    // 4. Verificar se a API encontrou o objeto
+    if (!respostaHTTP.ok) {
+      mostrarMensagem('Dispositivo não encontrado (ID: ' + id + ').', 'erro');
+      return;
+    }
+
+    // 5. Converter a resposta em objeto JavaScript
+    const item = await respostaHTTP.json();
+
+    // 6. Preencher o formulário com os dados retornados
+    campoNome.value = item.name || '';
+
+    if (item.data && item.data.color) {
+      campoCor.value = item.data.color;
+    } else {
+      campoCor.value = '';
+    }
+
+    if (item.data && item.data.capacity) {
+      campoCapacidade.value = item.data.capacity;
+    } else {
+      campoCapacidade.value = '';
+    }
+
+    if (item.data && item.data.price) {
+      campoPreco.value = item.data.price;
+    } else {
+      campoPreco.value = '';
+    }
+
+    // 7. Atualizar o vetor local com apenas este item
+    dispositivos = [item];
+    renderizar();
+
+    mostrarMensagem('Dispositivo "' + item.name + '" encontrado.');
+    
+  } catch (erro) {
+    mostrarMensagem('Erro ao buscar: ' + erro.message, 'erro');
+  }
 }
 
 async function cadastrarDispositivo() {
-  alert('Botão CADASTRAR clicado!');
+  // 1. Ler os valores dos campos do formulário
+  const nome = campoNome.value.trim();
+  const cor = campoCor.value.trim();
+  const capacidade = campoCapacidade.value.trim();
+  const preco = campoPreco.value;
+
+  // 2. Validação mínima: nome é obrigatório
+  if (!nome) {
+    mostrarMensagem('O nome do dispositivo é obrigatório.', 'erro');
+    return;
+  }
+
+  // 3. Montar o objeto no formato que a API espera
+  // parseFloat() converte texto para número decimal
+  // Se for inválido, retorna NaN — tratamos isso abaixo
+  let precoNumerico = parseFloat(preco);
+  if (isNaN(precoNumerico)) {
+    precoNumerico = 0;
+  }
+
+  const novoDispositivo = {
+    name: nome,
+    data: {
+      color: cor,
+      capacity: capacidade,
+      price: precoNumerico
+    }
+  };
+
+  try {
+    // 4. Fazer a requisição POST
+    const respostaHTTP = await fetch(URL_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(novoDispositivo)
+    });
+
+    // 5. Verificar se a resposta foi bem-sucedida
+    if (!respostaHTTP.ok) {
+      mostrarMensagem(
+        'Erro ao cadastrar. A API retornou status ' + respostaHTTP.status,
+        'erro'
+      );
+      return;
+    }
+
+    // 6. Converter a resposta (objeto criado pela API)
+    const itemCriado = await respostaHTTP.json();
+
+    // 7. Adicionar o novo item ao vetor local
+    dispositivos.push(itemCriado);
+
+    // 8. Redesenhar a tabela
+    renderizar();
+
+    // 9. Limpar formulário e avisar o usuário
+    limparFormulario();
+    mostrarMensagem('Dispositivo "' + itemCriado.name + '" cadastrado com sucesso.');
+    
+  } catch (erro) {
+    mostrarMensagem('Erro ao cadastrar: ' + erro.message, 'erro');
+  }
 }
 
 async function atualizarDispositivo() {
@@ -148,9 +263,6 @@ async function excluirDispositivo() {
   alert('Botão EXCLUIR clicado!');
 }
 
-// ============================================================
-// EVENT LISTENERS (CORRIGIDO - isso tava quebrado no PDF)
-// ============================================================
 
 document.getElementById('btnListar')
   .addEventListener('click', listarDispositivos);
